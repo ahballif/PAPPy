@@ -25,3 +25,4 @@ Wheelhouse is an attempt to include required libraries in the folder so the user
 ## current collaborators: 
 - Addison Ballif
 - Kylee Thomas
+- Katie Whipple

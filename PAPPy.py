@@ -7,7 +7,7 @@ from os.path import basename
 from numpy import array, sqrt
 import analysisFunctions as anal #import analysis windows
 
-# Current as of July 5, 2021 at 9:30 PM - Addison Ballif
+# Original Code written July 5, 2021 at 9:30 PM - Addison Ballif
 
 # Outline, Plans, and Ideas
 # 

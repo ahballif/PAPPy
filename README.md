@@ -21,3 +21,4 @@ Wheelhouse is an attempt to include required libraries in the folder so the user
 -  Fix the bug with the error function center. When using the MIRION detector which measures 511 keV at ~5500 channels, the error function does not center in the curve and is rendered useless.
 -  Look into uncertainty calculation. Some mentioned that it is off by a factor of 2.
 -  Look into integration bounds. Some mentioned that it includes one more channel than necessary. (May not be a big deal but compared to PASDA that was what they noticed.)
+## current collaborators: Kylee Thomas

@@ -1,7 +1,7 @@
 from scipy.optimize import curve_fit
 from scipy.special import erf
 from numpy import float_power as power
-from numpy import exp, pi, sqrt, trapz, sum, array, mean, std, linspace, transpose
+from numpy import exp, pi, sqrt, trapz, sum, array, mean, std, linspace, transpose, asarray
 import pasdatalib as pdl
 from numpy.random import poisson
 
@@ -172,12 +172,12 @@ def make_right_w_parameter_bound_guess(bins, counts, curveBounds):
 
     return lower, upper
 
-def make_curve_bound_guess(bins, counts):
+def make_curve_bound_guess(bins, energy, counts):
     # uses a gaussian fit to find the bounds for z-score of 5
-    p0 = [5110, 3, max(counts), 0.1*max(counts)]
+    p0 = [511, 3, max(counts), 0.1*max(counts)]
 
     #first fit gaussian to find std and mu. 
-    params, cov = curve_fit(gaussian, bins, counts, p0=p0)
+    params, cov = curve_fit(gaussian, energy, counts, p0=p0)
 
     #number of standard deviations
     z_score = 6 
@@ -188,7 +188,16 @@ def make_curve_bound_guess(bins, counts):
     lower = mu-sigma*z_score
     upper = mu+sigma*z_score
 
-    return lower, upper
+    lowerBin = bins[find_nearest_idx(energy, lower)]
+    upperBin = bins[find_nearest_idx(energy, upper)]
+
+    return lowerBin, upperBin
+
+def find_nearest_idx(array, value):
+    array = asarray(array)
+    idx = (abs(array - value)).argmin()
+    return idx
+
 
 # ------------------ PARAMETER CALCULATION ------------------
 

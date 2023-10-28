@@ -78,7 +78,8 @@ class FilePicker(tk.Frame):
             bins, energy, counts = pdl.importFile(filepath)
             #just override it, because we assume its the same
             self.master.bins0 = bins 
-            self.master.energy0 = energy
+            #add the energy spectrum to the list of energySpectra
+            self.master.energy0.append(energy)
             #add data to the list of data
             self.master.data0.append(counts)
             self.filepaths.append(filepath)
@@ -138,9 +139,11 @@ class FilePicker(tk.Frame):
         # to remove files which have been loaded. 
         idx = self.listbox.curselection()[0]
         self.master.data0.remove(self.master.data0[idx])
+        self.master.energy0.remove(self.master.energy0[idx])
         self.master.names.remove(self.master.names[idx])
         self.filepaths.remove(self.filepaths[idx])
         self.updateListBox()
+        self.updateStatusText()
         self.updateOptionsMenu()
         self.master.updateCroppedData()
         self.master.graph.plotData()
@@ -280,10 +283,10 @@ class GraphWindow(tk.Frame):
             self.ax.text(0.5, 0.5, 'No Data Loaded', horizontalalignment='center', verticalalignment='center', transform=self.ax.transAxes, bbox=dict(facecolor='red', alpha=0.5))
 
         #plot the data. updates the graph
-        if not self.isUsingChannels:
+        if not self.isUsingChannels and len(self.master.data) > 0:
             
             
-            xData = self.master.energy
+            xData = self.master.energy[self.master.ref_idx]
 
             if self.isShowingAll:
                 self.plotAll(xData)
@@ -295,39 +298,39 @@ class GraphWindow(tk.Frame):
             uppery = self.ax.get_ylim()[1]*2
 
             self.ax.axvline(self.master.center_keV, lowery, uppery, color='yellow')
-            self.ax.vlines([pdl.convertTokeV(self.master.lower, self.master.bins, self.master.energy), 
-                                  pdl.convertTokeV(self.master.upper, self.master.bins, self.master.energy)], 
+            self.ax.vlines([pdl.convertTokeV(self.master.lower, self.master.bins, self.master.energy[self.master.ref_idx]), 
+                                  pdl.convertTokeV(self.master.upper, self.master.bins, self.master.energy[self.master.ref_idx])], 
                                   lowery, uppery, color='sienna', label='Curve Bounds')
 
-            self.ax.fill_betweenx([lowery, uppery], pdl.convertTokeV(self.master.parameterWindow.lowerSBound, self.master.bins, self.master.energy), 
-                                  pdl.convertTokeV(self.master.parameterWindow.upperSBound, self.master.bins, self.master.energy), 
+            self.ax.fill_betweenx([lowery, uppery], pdl.convertTokeV(self.master.parameterWindow.lowerSBound, self.master.bins, self.master.energy[self.master.ref_idx]), 
+                                  pdl.convertTokeV(self.master.parameterWindow.upperSBound, self.master.bins, self.master.energy[self.master.ref_idx]), 
                                   color='springgreen', alpha=parameter_bounds_alpha, label='S-Param Bounds')
-            self.ax.fill_betweenx([lowery, uppery], pdl.convertTokeV(self.master.parameterWindow.lowerLWBound, self.master.bins, self.master.energy), 
-                                  pdl.convertTokeV(self.master.parameterWindow.upperLWBound, self.master.bins, self.master.energy), 
+            self.ax.fill_betweenx([lowery, uppery], pdl.convertTokeV(self.master.parameterWindow.lowerLWBound, self.master.bins, self.master.energy[self.master.ref_idx]), 
+                                  pdl.convertTokeV(self.master.parameterWindow.upperLWBound, self.master.bins, self.master.energy[self.master.ref_idx]), 
                                   color='skyblue', alpha=parameter_bounds_alpha, label='Left W-Param Bounds')
-            self.ax.fill_betweenx([lowery, uppery], pdl.convertTokeV(self.master.parameterWindow.lowerRWBound, self.master.bins, self.master.energy), 
-                                  pdl.convertTokeV(self.master.parameterWindow.upperRWBound, self.master.bins, self.master.energy), 
+            self.ax.fill_betweenx([lowery, uppery], pdl.convertTokeV(self.master.parameterWindow.lowerRWBound, self.master.bins, self.master.energy[self.master.ref_idx]), 
+                                  pdl.convertTokeV(self.master.parameterWindow.upperRWBound, self.master.bins, self.master.energy[self.master.ref_idx]), 
                                   color='palevioletred', alpha=parameter_bounds_alpha, label='Right W-Param Bounds')
             
             
             #uncomment this if you just want lines rather than the filled region. Gagliardi and Joey Watkins both use a filled region, So I switched to that. 
-            # self.ax.vlines([pdl.convertTokeV(self.master.parameterWindow.lowerSBound, self.master.bins, self.master.energy), 
-            #                       pdl.convertTokeV(self.master.parameterWindow.upperSBound, self.master.bins, self.master.energy)], 
+            # self.ax.vlines([pdl.convertTokeV(self.master.parameterWindow.lowerSBound, self.master.bins, self.master.energy[self.master.ref_idx]), 
+            #                       pdl.convertTokeV(self.master.parameterWindow.upperSBound, self.master.bins, self.master.energy[self.master.ref_idx])], 
             #                       lowery, uppery, color='springgreen', label='S-Param Bounds')
-            # self.ax.vlines([pdl.convertTokeV(self.master.parameterWindow.lowerLWBound, self.master.bins, self.master.energy), 
-            #                       pdl.convertTokeV(self.master.parameterWindow.upperLWBound, self.master.bins, self.master.energy)], 
+            # self.ax.vlines([pdl.convertTokeV(self.master.parameterWindow.lowerLWBound, self.master.bins, self.master.energy[self.master.ref_idx]), 
+            #                       pdl.convertTokeV(self.master.parameterWindow.upperLWBound, self.master.bins, self.master.energy[self.master.ref_idx])], 
             #                       lowery, uppery, color='skyblue', label='Left W-Param Bounds')
-            # self.ax.vlines([pdl.convertTokeV(self.master.parameterWindow.lowerRWBound, self.master.bins, self.master.energy), 
-            #                       pdl.convertTokeV(self.master.parameterWindow.upperRWBound, self.master.bins, self.master.energy)], 
+            # self.ax.vlines([pdl.convertTokeV(self.master.parameterWindow.lowerRWBound, self.master.bins, self.master.energy[self.master.ref_idx]), 
+            #                       pdl.convertTokeV(self.master.parameterWindow.upperRWBound, self.master.bins, self.master.energy[self.master.ref_idx])], 
             #                       lowery, uppery, color='palevioletred', label='Right W-Param Bounds')
 
             #update xbounds to ignore vline positions
             try:
                 if self.isZoomedOnCurve:
-                    self.ax.set_xlim(pdl.convertTokeV(self.master.lower, self.master.bins, self.master.energy),
-                                     pdl.convertTokeV(self.master.upper, self.master.bins, self.master.energy))
+                    self.ax.set_xlim(pdl.convertTokeV(self.master.lower, self.master.bins, self.master.energy[self.master.ref_idx]),
+                                     pdl.convertTokeV(self.master.upper, self.master.bins, self.master.energy[self.master.ref_idx]))
                 else:
-                    self.ax.set_xlim(min(self.master.energy), max(self.master.energy))
+                    self.ax.set_xlim(min(self.master.energy[self.master.ref_idx]), max(self.master.energy[self.master.ref_idx]))
             except ValueError:
                 pass #there isn't any data to look at yet. 
 
@@ -487,7 +490,7 @@ class BoundsWindow(tk.Frame):
             upper = int(float(self.upperEntry.get()))
             bgsize = int(float(self.background_size_Entry.get()))
 
-            center = pdl.convertTokeV(float(lower+upper)/2, self.master.bins, self.master.energy)
+            center = pdl.convertTokeV(float(lower+upper)/2, self.master.bins, self.master.energy[self.master.ref_idx])
 
             self.master.lower = lower
             self.master.upper = upper
@@ -510,7 +513,7 @@ class BoundsWindow(tk.Frame):
 
     def makeGuess(self):
         #makes a guess of the bounds
-        lower, upper = ph.make_curve_bound_guess(self.master.bins, self.master.data[self.master.ref_idx])
+        lower, upper = ph.make_curve_bound_guess(self.master.bins, self.master.energy[self.master.ref_idx], self.master.data[self.master.ref_idx])
 
         self.master.lower = int(lower)
         self.master.upper = int(upper)
@@ -520,7 +523,7 @@ class BoundsWindow(tk.Frame):
         self.lowerEntry.insert(0, self.master.lower)
         self.upperEntry.insert(0, self.master.upper)
 
-        center = pdl.convertTokeV(float(lower+upper)/2, self.master.bins, self.master.energy)
+        center = pdl.convertTokeV(float(lower+upper)/2, self.master.bins, self.master.energy[self.master.ref_idx])
         
         self.master.center_keV = center
         self.master.center = int(float(upper+lower)/2)
@@ -1054,7 +1057,7 @@ class MainApplication(tk.Frame):
         # There is a 0 version which contains the entire spectrum
         # The bins, energy, data lists constain the cropped data. 
         self.bins0 = [] # a single array
-        self.energy0 = [] # a sigle array
+        self.energy0 = [] # this will be an array of arrays of energy spectra (because different samples may have different calibrations)
         self.data0 = [] #this will be an array of arrays of counts
         
         self.bins = []
@@ -1115,6 +1118,7 @@ class MainApplication(tk.Frame):
     def updateCroppedData(self):
         #updates the cropped data
         self.data = []
+        self.energy = []
         self.backgrounds = []
         self.data_un = []
         self.backgrounds_un = []
@@ -1128,8 +1132,9 @@ class MainApplication(tk.Frame):
         self.rw_un = []
 
         for counts0 in self.data0:
-            self.bins, self.energy, counts = pdl.cropWindow(self.bins0, self.energy0, counts0, self.lower-self.background_size, self.upper+self.background_size)
+            self.bins, energySpectrum, counts = pdl.cropWindow(self.bins0, self.energy0[self.data0.index(counts0)], counts0, self.lower-self.background_size, self.upper+self.background_size)
             self.data.append(counts)
+            self.energy.append(energySpectrum)
             self.data_un.append(sqrt(array(counts)))
             self.backgrounds.append(array(counts)*0)
             self.backgrounds_un.append(array(counts)*0)

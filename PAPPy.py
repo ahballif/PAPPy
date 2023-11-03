@@ -555,7 +555,7 @@ class BackgroundSelectionWindow(tk.Frame):
         # the function that calculates and plots the background.
         for i in range(len(self.master.data)):
             counts = self.master.data[i]
-            self.master.backgrounds[i], self.master.backgrounds_un[i] = ph.find_background_shape(self.master.bins, counts, self.master.lower, self.master.upper, self.value_inside.get())
+            self.master.backgrounds[i], self.master.backgrounds_un[i] = ph.find_background_shape(self.master.bins, self.master.energy[i], counts, self.master.lower, self.master.upper, self.value_inside.get())
         
         self.master.graph.setIsShowingAll(value=False)
         self.master.background_type = self.value_inside.get()

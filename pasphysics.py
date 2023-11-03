@@ -48,7 +48,7 @@ def comp_erf(x, mu, sigma, k, C):
 
 
 # ------------ THE MAIN BACKGROUND FUNCTION --------------
-def find_background_shape(bins, counts, lower, upper, type):
+def find_background_shape(bins, energy, counts, lower, upper, type):
     #finds the background function
     if type == 'linear' or type == 'linear monte-carlo':
         #use a linear model
@@ -70,7 +70,10 @@ def find_background_shape(bins, counts, lower, upper, type):
 
     elif type == 'erf':
         # a version where we fit a gaussian to find a standard deviation and mean, and then we fit the s curve to find the height and scale. 
-        p0 = [5110, 3, max(counts), 0.1*max(counts)]
+        peakCenterGuess = bins[find_nearest_idx(energy, 511)]
+        p0 = [peakCenterGuess, 3, max(counts), 0.1*max(counts)]  
+        
+
 
         #first fit gaussian to find std and mu. 
         params, cov = curve_fit(gaussian, bins, counts, p0=p0)

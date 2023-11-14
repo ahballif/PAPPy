@@ -12,17 +12,4 @@ pasphysics.py contains bound guess, background calculations, and numerical integ
 Wheelhouse is an attempt to include required libraries in the folder so the user does not need them to be installed on their computer. 
 
 
-
-
-## CURRENT PROJECTS
-
-- Make initial guess for peak location based off energy rather than channels. The reason for doing this is that different detectors measure a 511 keV peak in different channels.
--  Using a gaussian fit to find peak center, align all the samples to be centered in the same location. (Add a button to toggle this on or off, because it may not be desired in all settings applications.)
--  Fix the bug with the error function center. When using the MIRION detector which measures 511 keV at ~5500 channels, the error function does not center in the curve and is rendered useless.
--  Look into uncertainty calculation. Some mentioned that it is off by a factor of 2.
--  Look into integration bounds. Some mentioned that it includes one more channel than necessary. (May not be a big deal but compared to PASDA that was what they noticed.)
-
-## current collaborators: 
-- Addison Ballif
-- Kylee Thomas
-- Katie Whipple
+PAPPy1 is the original code. PAPPy2 is an attempt to update the code. The main structure is being changed to do calculation based on energy rather than channels. Because this is going to be a large remodel, PAPPy1 is provided as the current usable version. 

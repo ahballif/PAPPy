@@ -22,6 +22,9 @@ Wheelhouse is an attempt to include required libraries in the folder so the user
 -  Look into uncertainty calculation. Some mentioned that it is off by a factor of 2.
 -  Look into integration bounds. Some mentioned that it includes one more channel than necessary. (May not be a big deal but compared to PASDA that was what they noticed.)
 
+### Update
+Currently PAPPy calculates based on channels and according to George Evans, it would be better to calculate based of energy using linear interpolation. This removes the need to line up peaks, although we might still add that. It uses the calibration from the detector to line up the peaks. In short, the bins data is not really going to be used at all. Because of this, I am just going to make a new copy of PAPPy that completed removes the bins slot. 
+
 ## current collaborators: 
 - Addison Ballif
 - Kylee Thomas

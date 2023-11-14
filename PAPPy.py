@@ -76,7 +76,7 @@ class FilePicker(tk.Frame):
                 return
 
             bins, energy, counts = pdl.importFile(filepath)
-            #just override it, because we assume its the same
+            #just override it, because we assume its the same (as in its also starting at 0 and moving up by 1)
             self.master.bins0 = bins 
             #add the energy spectrum to the list of energySpectra
             self.master.energy0.append(energy)

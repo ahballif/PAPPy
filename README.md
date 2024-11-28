@@ -12,4 +12,4 @@ pasphysics.py contains bound guess, background calculations, and numerical integ
 Wheelhouse is an attempt to include required libraries in the folder so the user does not need them to be installed on their computer. 
 
 
-PAPPy1 is the original code. PAPPy2 is an attempt to update the code. The main structure is being changed to do calculation based on energy rather than channels. Because this is going to be a large remodel, PAPPy1 is provided as the current usable version. 
+PAPPy1 is the original code. PAPPy2 is an attempt to update the code for use with the new detector. The main structure is being changed to do calculation based on energy rather than channels. Because this is going to be a large remodel, PAPPy1 is provided as the current usable version. 
